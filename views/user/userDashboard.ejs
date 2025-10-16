@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <%- include("../includes/head.ejs") %>
+  <title>User Dashboard</title>
+  </head>
+
+  <body class="d-flex flex-column h-100">
+    <%- include("../includes/navbar.ejs") %>
+    
+    <!-- Flash Messages -->
+    <%- include("../includes/flash.ejs") %>
+
+    <!-- Main Content -->
+    <main class="flex-shrink-0">
+      <div class="container mt-4">
+        <div class="row">
+          <div class="col-12">
+            <div class="card shadow-sm">
+              <div class="card-header bg-info text-white">
+                <h4 class="mb-0">
+                  <i class="bi bi-person me-2"></i>
+                  Student Dashboard
+                </h4>
+              </div>
+              <div class="card-body">
+                <h2 class="text-info mb-3">Welcome, <%= username %>!</h2>
+                <p class="lead">Stay updated with department announcements and activities.</p>
+                
+                <div class="row mt-4">
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-info">
+                      <div class="card-body text-center">
+                        <i class="bi bi-bell fs-1 text-info mb-3"></i>
+                        <h5>View Announcements</h5>
+                        <p class="text-muted">Check latest department updates</p>
+                        <a href="/api/announcements" class="btn btn-info">
+                          View Updates
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-success">
+                      <div class="card-body text-center">
+                        <i class="bi bi-file-earmark-text fs-1 text-success mb-3"></i>
+                        <h5>View Documents</h5>
+                        <p class="text-muted">Access study materials and resources</p>
+                        <a href="/api/documents" class="btn btn-success">
+                          Browse Files
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-warning">
+                      <div class="card-body text-center">
+                        <i class="bi bi-calendar-x fs-1 text-warning mb-3"></i>
+                        <h5>Leave Requests</h5>
+                        <p class="text-muted">Submit and track leave applications</p>
+                        <a href="/api/leave-requests" class="btn btn-warning">
+                          My Requests
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 mb-3">
+                    <div class="card border-secondary">
+                      <div class="card-body text-center">
+                        <i class="bi bi-calendar-event fs-1 text-secondary mb-3"></i>
+                        <h5>Events</h5>
+                        <p class="text-muted">Upcoming department events</p>
+                        <a href="#" class="btn btn-secondary">
+                          View Events
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include("../includes/footer.ejs") %>
+  </body>
+</html>

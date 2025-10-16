@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <%- include("../includes/head.ejs") %>
+  <title>Leave Requests - Dept Connect</title>
+  </head>
+
+  <body class="d-flex flex-column h-100 bg-light">
+    <%- include("../includes/navbar.ejs") %>
+    
+    <!-- Flash Messages -->
+    <%- include("../includes/flash.ejs") %>
+
+    <!-- Main Content -->
+    <main class="flex-shrink-0">
+      <div class="container mt-4">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="mb-1 d-flex align-items-center">
+              <i class="bi bi-calendar-x me-2 text-primary"></i>
+              Leave Requests
+              <% if (currentUser.role === 'user') { %>
+                <small class="text-muted ms-2">(My Requests)</small>
+              <% } else if (currentUser.role === 'faculty') { %>
+                <small class="text-muted ms-2">(Assigned to Me)</small>
+              <% } else { %>
+                <small class="text-muted ms-2">(All Requests)</small>
+              <% } %>
+            </h4>
+            <p class="text-muted mb-0">
+              <% if (currentUser.role === 'user') { %>
+                Manage your leave applications and track their status
+              <% } else { %>
+                Review and manage student leave requests
+              <% } %>
+            </p>
+          </div>
+          <% if (currentUser.role === 'user') { %>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#leaveRequestModal">
+              <i class="bi bi-plus me-1"></i>
+              New Leave Request
+            </button>
+          <% } %>
+        </div>
+
+        <!-- Status Filter Buttons -->
+        <div class="mb-4">
+          <div class="btn-group" role="group">
+            <a href="/api/leave-requests?status=all" 
+               class="btn <%= selectedStatus === 'all' ? 'btn-primary' : 'btn-outline-secondary' %>">
+              All
+            </a>
+            <a href="/api/leave-requests?status=pending" 
+               class="btn <%= selectedStatus === 'pending' ? 'btn-warning' : 'btn-outline-secondary' %>">
+              Pending
+            </a>
+            <a href="/api/leave-requests?status=approved" 
+               class="btn <%= selectedStatus === 'approved' ? 'btn-success' : 'btn-outline-secondary' %>">
+              Approved
+            </a>
+            <a href="/api/leave-requests?status=rejected" 
+               class="btn <%= selectedStatus === 'rejected' ? 'btn-danger' : 'btn-outline-secondary' %>">
+              Rejected
+            </a>
+          </div>
+        </div>
+
+        <!-- Leave Requests List -->
+        <div class="row">
+          <% if (leaveRequests && leaveRequests.length > 0) { %>
+            <% leaveRequests.forEach(function(request) { %>
+              <div class="col-12 mb-3">
+                <div class="card border-0 shadow-sm">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <div class="flex-grow-1">
+                        <h6 class="card-title mb-1 fw-bold"><%= request.title %></h6>
+                        <p class="text-muted mb-2">
+                          <strong>Student:</strong> <%= request.requestedBy.username %> | 
+                          <strong>Class Teacher:</strong> <%= request.classTeacher %>
+                        </p>
+                      </div>
+                      
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-<%= request.status === 'approved' ? 'success' : request.status === 'rejected' ? 'danger' : 'warning text-dark' %> rounded-pill">
+                          <%= request.status.toUpperCase() %>
+                        </span>
+                        
+                        <!-- Action buttons -->
+                        <% if (currentUser.role === 'user' && request.status === 'pending') { %>
+                          <div class="dropdown">
+                            <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                              <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li>
+                                <a class="dropdown-item" href="/api/leave-requests/<%= request._id %>/edit">
+                                  <i class="bi bi-pencil me-2"></i>Edit
+                                </a>
+                              </li>
+                              <li>
+                                <form action="/api/leave-requests/<%= request._id %>?_method=DELETE" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                                  <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-trash me-2"></i>Delete
+                                  </button>
+                                </form>
+                              </li>
+                            </ul>
+                          </div>
+                        <% } else if ((currentUser.role === 'faculty' && request.classTeacher === currentUser.username) || currentUser.role === 'hod') { %>
+                          <% if (request.status === 'pending') { %>
+                            <button class="btn btn-sm btn-success" onclick="reviewRequest('<%= request._id %>', 'approve')">
+                              <i class="bi bi-check-lg"></i> Approve
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="reviewRequest('<%= request._id %>', 'reject')">
+                              <i class="bi bi-x-lg"></i> Reject
+                            </button>
+                          <% } %>
+                        <% } %>
+                      </div>
+                    </div>
+                    
+                    <div class="row mb-2">
+                      <div class="col-md-3">
+                        <small class="text-muted">Reason:</small><br>
+                        <span class="badge bg-info rounded-pill">
+                          <%= request.reason.charAt(0).toUpperCase() + request.reason.slice(1) %>
+                        </span>
+                      </div>
+                      <div class="col-md-4">
+                        <small class="text-muted">Duration:</small><br>
+                        <strong><%= new Date(request.fromDate).toLocaleDateString() %></strong> to 
+                        <strong><%= new Date(request.toDate).toLocaleDateString() %></strong>
+                        <small class="text-muted">(<%= request.numberOfDays %> days)</small>
+                      </div>
+                      <div class="col-md-3">
+                        <small class="text-muted">Submitted:</small><br>
+                        <%= new Date(request.createdAt).toLocaleDateString() %>
+                      </div>
+                      <div class="col-md-2">
+                        <% if (request.attachmentPath) { %>
+                          <a href="/api/leave-requests/<%= request._id %>/download" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-paperclip"></i> Attachment
+                          </a>
+                        <% } %>
+                      </div>
+                    </div>
+
+                    <% if (request.reviewedBy) { %>
+                      <div class="mt-2 p-2 bg-light rounded">
+                        <small class="text-muted">
+                          <strong>Reviewed by:</strong> <%= request.reviewedBy.username %> 
+                          on <%= new Date(request.reviewDate).toLocaleDateString() %>
+                        </small>
+                        <% if (request.reviewComments) { %>
+                          <br><small><strong>Comments:</strong> <%= request.reviewComments %></small>
+                        <% } %>
+                      </div>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <div class="col-12">
+              <div class="text-center py-5">
+                <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+                <h5 class="text-muted mt-3">No leave requests found</h5>
+                <p class="text-muted">
+                  <% if (currentUser.role === 'user') { %>
+                    Submit your first leave request to get started!
+                  <% } else { %>
+                    No requests assigned to you at the moment.
+                  <% } %>
+                </p>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </main>
+
+    <!-- Create Leave Request Modal (Students only) -->
+    <% if (currentUser.role === 'user') { %>
+      <div class="modal fade" id="leaveRequestModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header border-0">
+              <h5 class="modal-title">Submit Leave Request</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/api/leave-requests" method="POST" enctype="multipart/form-data">
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="title" class="form-label">Subject <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="title" name="title" placeholder="Enter leave subject" required>
+                </div>
+                <div class="mb-3">
+                  <label for="reason" class="form-label">Reason <span class="text-danger">*</span></label>
+                  <select class="form-select" id="reason" name="reason" required>
+                    <option value="">Select reason</option>
+                    <option value="sick">Sick Leave</option>
+                    <option value="personal">Personal Leave</option>
+                    <option value="academic">Academic Leave</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="fromDate" class="form-label">From Date <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="fromDate" name="fromDate" min="<%= new Date().toISOString().split('T')[0] %>" required>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="toDate" class="form-label">To Date <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="toDate" name="toDate" min="<%= new Date().toISOString().split('T')[0] %>" required>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="classTeacher" class="form-label">Class Teacher Username <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="classTeacher" name="classTeacher" placeholder="Enter class teacher's username" required>
+                </div>
+                <div class="mb-3">
+                  <label for="attachment" class="form-label">Attachment (Optional)</label>
+                  <input type="file" class="form-control" id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx">
+                  <div class="form-text">Upload medical certificate, documents, etc.</div>
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Submit Request</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title" id="reviewModalTitle">Review Leave Request</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <form id="reviewForm" method="POST">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="reviewComments" class="form-label">Comments (Optional)</label>
+                <textarea class="form-control" id="reviewComments" name="reviewComments" rows="3" placeholder="Add any comments..."></textarea>
+              </div>
+            </div>
+            <div class="modal-footer border-0">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn" id="reviewSubmitBtn">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <%- include("../includes/footer.ejs") %>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      function reviewRequest(requestId, action) {
+        const modal = new bootstrap.Modal(document.getElementById('reviewModal'));
+        const form = document.getElementById('reviewForm');
+        const title = document.getElementById('reviewModalTitle');
+        const submitBtn = document.getElementById('reviewSubmitBtn');
+        
+        if (action === 'approve') {
+          title.textContent = 'Approve Leave Request';
+          submitBtn.textContent = 'Approve';
+          submitBtn.className = 'btn btn-success';
+          form.action = `/api/leave-requests/${requestId}/approve`;
+        } else {
+          title.textContent = 'Reject Leave Request';
+          submitBtn.textContent = 'Reject';
+          submitBtn.className = 'btn btn-danger';
+          form.action = `/api/leave-requests/${requestId}/reject`;
+        }
+        
+        modal.show();
+      }
+
+      // Date validation in modal
+      document.getElementById('fromDate').addEventListener('change', function() {
+        document.getElementById('toDate').min = this.value;
+      });
+    </script>
+  </body>
+</html>

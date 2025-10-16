@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Department Connect - Unified Hub</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3730a3", // Indigo-700
+              secondary: "#14b8a6", // Teal-500
+              background: "#f9fafb", // Gray-50
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* Custom CSS for Inter font and smooth transitions */
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+    </style>
+  </head>
+  <body class="bg-background min-h-screen flex flex-col">
+    <!-- Header / Navigation -->
+    <header class="sticky top-0 z-10 bg-white shadow-md">
+      <nav
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center"
+      >
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+          <svg
+            class="w-6 h-6 text-primary"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.5 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.5-3-9s1.343-9 3-9m-9 9h2c1.657 0 3 4.5 3 9s-1.343 9-3 9H3"
+            ></path>
+          </svg>
+          <span class="text-xl font-bold text-primary">Department Connect</span>
+        </div>
+
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex space-x-6 items-center">
+          <a
+            href="#features"
+            class="text-gray-600 hover:text-primary transition duration-150"
+            >Features</a
+          >
+          <a
+            href="#roles"
+            class="text-gray-600 hover:text-primary transition duration-150"
+            >Roles</a
+          >
+          <a
+            href="#about"
+            class="text-gray-600 hover:text-primary transition duration-150"
+            >About</a
+          >
+          <button
+            onclick="handleLoginClick()"
+            class="py-2 px-6 bg-secondary text-white font-semibold rounded-full shadow-md hover:bg-teal-400 transition duration-300 transform hover:scale-105"
+          >
+            Log In
+          </button>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button
+          id="mobile-menu-button"
+          class="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100"
+          aria-label="Toggle Menu"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16m-7 6h7"
+            ></path>
+          </svg>
+        </button>
+      </nav>
+
+      <!-- Mobile Menu Dropdown -->
+      <div
+        id="mobile-menu"
+        class="md:hidden hidden bg-white border-t border-gray-100 pb-2"
+      >
+        <a
+          href="#features"
+          class="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition duration-150"
+          >Features</a
+        >
+        <a
+          href="#roles"
+          class="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition duration-150"
+          >Roles</a
+        >
+        <a
+          href="#about"
+          class="block px-4 py-2 text-gray-700 hover:bg-gray-50 transition duration-150"
+          >About</a
+        >
+        <div class="px-4 pt-2">
+          <button
+            onclick="handleLoginClick()"
+            class="w-full py-2 bg-secondary text-white font-semibold rounded-lg shadow-md hover:bg-teal-400 transition duration-300"
+          >
+            Log In
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-grow">
+      <!-- 1. Hero Section -->
+      <section id="hero" class="bg-primary text-white py-16 sm:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1
+            class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4"
+          >
+            Department Connect: Your
+            <span class="text-secondary">Unified Hub</span>
+          </h1>
+          <p
+            class="text-xl sm:text-2xl font-light mb-8 max-w-3xl mx-auto opacity-90"
+          >
+            Seamlessly manage announcements, leave requests, and documents.
+            Connecting HODs, Faculty, and Students for greater efficiency.
+          </p>
+          <div
+            class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4"
+          >
+            <button
+              onclick="handleLoginClick()"
+              class="py-3 px-8 text-lg bg-secondary text-primary-900 font-bold rounded-full shadow-lg hover:bg-teal-300 transition duration-300 transform hover:scale-105 border-2 border-secondary hover:border-teal-300"
+            >
+              Get Started (Log In)
+            </button>
+            <button
+              onclick="handleSignupClick()"
+              class="py-3 px-8 text-lg bg-transparent text-white font-semibold rounded-full border-2 border-white hover:bg-white hover:text-primary transition duration-300 transform hover:scale-105"
+            >
+              Sign Up
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Features Overview -->
+      <section id="features" class="py-16 sm:py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
+              Streamline Your Departmental Activities
+            </h2>
+            <p class="text-lg text-gray-600">
+              Three powerful features designed to boost clarity and organization
+              for every user.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Feature Card 1: Announcements -->
+            <div
+              class="feature-card p-6 bg-gray-50 rounded-xl shadow-lg transition duration-300"
+            >
+              <div class="text-secondary mb-4">
+                <svg
+                  class="w-10 h-10"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-3.615A4.015 4.015 0 011 15.39V6.28a1.76 1.76 0 012.871-1.24l2.585 3.018a4.015 4.015 0 013.23.013l.896.797a1.76 1.76 0 013.417-.592l-2.147-3.615a4.015 4.015 0 01-3.684-1.39V5.882z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-gray-900 mb-3">
+                Real-Time Announcements
+              </h3>
+              <p class="text-gray-600">
+                HODs and Faculty can create and manage essential updates.
+                Students receive instant, reliable communication for class
+                changes, events, and important notices.
+              </p>
+            </div>
+
+            <!-- Feature Card 2: Leave Request -->
+            <div
+              class="feature-card p-6 bg-gray-50 rounded-xl shadow-lg transition duration-300"
+            >
+              <div class="text-secondary mb-4">
+                <svg
+                  class="w-10 h-10"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM6 18h12a2 2 0 002-2v-3a2 2 0 00-2-2H6a2 2 0 00-2 2v3a2 2 0 002 2zm0-4h12v3a1 1 0 01-1 1H7a1 1 0 01-1-1v-3z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-gray-900 mb-3">
+                Digital Leave Management
+              </h3>
+              <p class="text-gray-600">
+                Submit leave requests quickly via a standard form with
+                categories (Sick, Personal, etc.). HODs can efficiently approve
+                or reject submissions, with copies sent to Faculty.
+              </p>
+            </div>
+
+            <!-- Feature Card 3: Document Repository -->
+            <div
+              class="feature-card p-6 bg-gray-50 rounded-xl shadow-lg transition duration-300"
+            >
+              <div class="text-secondary mb-4">
+                <svg
+                  class="w-10 h-10"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
+                  ></path>
+                </svg>
+              </div>
+              <h3 class="text-xl font-semibold text-gray-900 mb-3">
+                Secure Document Repository
+              </h3>
+              <p class="text-gray-600">
+                Faculty can upload and organize essential departmental
+                documents. Create, update, and securely store resources
+                accessible to the authorized team.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Role-Based Value Proposition -->
+      <section id="roles" class="py-16 sm:py-24 bg-background">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
+              Connect, Collaborate, Control
+            </h2>
+            <p class="text-lg text-gray-600">
+              A unique experience tailored to the needs of every user role.
+            </p>
+          </div>
+
+          <!-- Role Cards Container -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- HOD Card -->
+            <div
+              class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-primary"
+            >
+              <div class="text-primary mb-4 text-3xl font-bold">HOD</div>
+              <h3 class="text-2xl font-semibold text-gray-800 mb-3">
+                Complete Control & Oversight
+              </h3>
+              <ul class="text-gray-600 space-y-2 list-disc list-inside">
+                <li>Full CRUD for all Announcements.</li>
+                <li>
+                  Efficient **Approve/Reject** workflow for all leave requests.
+                </li>
+                <li>Maintain visibility over all Faculty documents.</li>
+              </ul>
+            </div>
+
+            <!-- Faculty Card -->
+            <div
+              class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-secondary"
+            >
+              <div class="text-secondary mb-4 text-3xl font-bold">Faculty</div>
+              <h3 class="text-2xl font-semibold text-gray-800 mb-3">
+                Streamlined Management Tools
+              </h3>
+              <ul class="text-gray-600 space-y-2 list-disc list-inside">
+                <li>CRUD management for department Announcements.</li>
+                <li>Create and Upload documents to the Repository.</li>
+                <li>
+                  Receive copies of approved leave requests for class tracking.
+                </li>
+              </ul>
+            </div>
+
+            <!-- Student Card -->
+            <div
+              class="bg-white p-8 rounded-2xl shadow-xl border-t-4 border-indigo-400"
+            >
+              <div class="text-indigo-400 mb-4 text-3xl font-bold">Student</div>
+              <h3 class="text-2xl font-semibold text-gray-800 mb-3">
+                Stay Informed & Submit
+              </h3>
+              <ul class="text-gray-600 space-y-2 list-disc list-inside">
+                <li>Instantly view all official Announcements.</li>
+                <li>
+                  Quickly fill and submit Leave Requests (Sick, Personal, etc.).
+                </li>
+                <li>Access approved, public departmental resources.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Authentication and Security Callout -->
+      <section id="security" class="py-16 bg-primary/10">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+            Secure & Reliable Authentication
+          </h2>
+          <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+            We utilize modern security standards (Passport.js / Spring Security
+            / JWT) to ensure secure password handling and validation for all
+            HODs, Faculty, and Students. Your data is protected.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <p class="text-lg font-bold mb-2">Department Connect</p>
+        <p class="text-gray-400">
+          &copy; 2025 Department Connect. All rights reserved. For SIH Project.
+        </p>
+        <div class="mt-4 space-x-4 text-sm">
+          <a href="#" class="hover:text-secondary transition duration-150"
+            >Privacy Policy</a
+          >
+          <span class="text-gray-500">|</span>
+          <a href="#" class="hover:text-secondary transition duration-150"
+            >Terms of Service</a
+          >
+        </div>
+      </div>
+    </footer>
+
+    <!-- JavaScript Section: UI Logic Only -->
+    <script>
+      // --- UI / Interaction Logic ---
+
+      // Mobile Menu Toggle
+      const mobileMenuButton = document.getElementById("mobile-menu-button");
+      const mobileMenu = document.getElementById("mobile-menu");
+
+      mobileMenuButton.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+
+      // Handler for Login Button - Redirects to the login route
+      window.handleLoginClick = () => {
+        window.location.href = "/api/auth/login";
+      };
+
+      window.handleSignupClick = () => {
+        window.location.href = "/api/auth/signUp";
+      };
+
+      /* Removed alertPlaceholder function as it is no longer needed */
+    </script>
+  </body>
+</html>

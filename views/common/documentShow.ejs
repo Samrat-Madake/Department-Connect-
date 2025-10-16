@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <%- include("../includes/head.ejs") %>
+  <title>Documents - Dept Connect</title>
+  </head>
+
+  <body class="d-flex flex-column h-100 bg-light">
+    <%- include("../includes/navbar.ejs") %>
+    
+    <!-- Flash Messages -->
+    <%- include("../includes/flash.ejs") %>
+
+    <!-- Main Content -->
+    <main class="flex-shrink-0">
+      <div class="container mt-4">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="mb-1 d-flex align-items-center">
+              <i class="bi bi-folder me-2 text-primary"></i>
+              Documents
+            </h4>
+            <p class="text-muted mb-0">Access department documents and resources</p>
+          </div>
+          <% if (currentUser && (currentUser.role === 'faculty' || currentUser.role === 'hod')) { %>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#documentModal">
+              <i class="bi bi-cloud-upload me-1"></i>
+              Upload Document
+            </button>
+          <% } %>
+        </div>
+
+        <!-- Category Filter Buttons -->
+        <div class="mb-4">
+          <div class="btn-group" role="group">
+            <a href="/api/documents?category=all" 
+               class="btn <%= selectedCategory === 'all' ? 'btn-primary' : 'btn-outline-secondary' %>">
+              All
+            </a>
+            <a href="/api/documents?category=syllabus" 
+               class="btn <%= selectedCategory === 'syllabus' ? 'btn-info' : 'btn-outline-secondary' %>">
+              Syllabus
+            </a>
+            <a href="/api/documents?category=notes" 
+               class="btn <%= selectedCategory === 'notes' ? 'btn-success' : 'btn-outline-secondary' %>">
+              Notes
+            </a>
+            <a href="/api/documents?category=assignments" 
+               class="btn <%= selectedCategory === 'assignments' ? 'btn-warning' : 'btn-outline-secondary' %>">
+              Assignments
+            </a>
+            <a href="/api/documents?category=notices" 
+               class="btn <%= selectedCategory === 'notices' ? 'btn-danger' : 'btn-outline-secondary' %>">
+              Notices
+            </a>
+            <a href="/api/documents?category=forms" 
+               class="btn <%= selectedCategory === 'forms' ? 'btn-secondary' : 'btn-outline-secondary' %>">
+              Forms
+            </a>
+          </div>
+        </div>
+
+        <!-- Documents List -->
+        <div class="row">
+          <% if (documents && documents.length > 0) { %>
+            <% documents.forEach(function(document) { %>
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card border-0 shadow-sm h-100">
+                  <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <div class="flex-grow-1">
+                        <h6 class="card-title mb-1 fw-bold text-truncate"><%= document.title %></h6>
+                        <% if (document.description) { %>
+                          <p class="card-text text-muted small mb-2"><%= document.description %></p>
+                        <% } %>
+                      </div>
+                      <!-- Action buttons for faculty/HOD -->
+                      <% if (currentUser && (currentUser.role === 'faculty' || currentUser.role === 'hod')) { %>
+                        <% if (currentUser.role === 'hod' || document.uploadedBy._id.toString() === currentUser._id.toString()) { %>
+                          <div class="dropdown">
+                            <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                              <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                              <li>
+                                <a class="dropdown-item" href="/api/documents/<%= document._id %>/edit">
+                                  <i class="bi bi-pencil me-2"></i>Edit
+                                </a>
+                              </li>
+                              <li>
+                                <form action="/api/documents/<%= document._id %>?_method=DELETE" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                                  <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-trash me-2"></i>Delete
+                                  </button>
+                                </form>
+                              </li>
+                            </ul>
+                          </div>
+                        <% } %>
+                      <% } %>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="badge bg-<%= document.category === 'syllabus' ? 'info' : document.category === 'notes' ? 'success' : document.category === 'assignments' ? 'warning text-dark' : document.category === 'notices' ? 'danger' : 'secondary' %> rounded-pill">
+                        <%= document.category %>
+                      </span>
+                      <small class="text-muted">
+                        <%= (document.fileSize / 1024 / 1024).toFixed(2) %> MB
+                      </small>
+                    </div>
+                    
+                    <div class="mt-auto">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                          By <%= document.uploadedBy.username %>
+                        </small>
+                        <a href="/api/documents/<%= document._id %>/download" class="btn btn-sm btn-outline-primary" target="_blank">
+                          <i class="bi bi-download me-1"></i>
+                          Download
+                        </a>
+                      </div>
+                      <small class="text-muted d-block mt-1">
+                        <%= new Date(document.createdAt).toLocaleDateString() %>
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <div class="col-12">
+              <div class="text-center py-5">
+                <i class="bi bi-folder text-muted" style="font-size: 3rem;"></i>
+                <h5 class="text-muted mt-3">No documents available</h5>
+                <p class="text-muted">
+                  <% if (currentUser && (currentUser.role === 'faculty' || currentUser.role === 'hod')) { %>
+                    Upload the first document to get started!
+                  <% } else { %>
+                    Check back later for new documents.
+                  <% } %>
+                </p>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </main>
+
+    <!-- Upload Document Modal -->
+    <% if (currentUser && (currentUser.role === 'faculty' || currentUser.role === 'hod')) { %>
+      <div class="modal fade" id="documentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header border-0">
+              <h5 class="modal-title">Upload Document</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/api/documents" method="POST" enctype="multipart/form-data">
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="title" name="title" placeholder="Enter document title" required>
+                </div>
+                <div class="mb-3">
+                  <label for="description" class="form-label">Description</label>
+                  <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter document description (optional)"></textarea>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                      <option value="other" selected>Other</option>
+                      <option value="syllabus">Syllabus</option>
+                      <option value="notes">Notes</option>
+                      <option value="assignments">Assignments</option>
+                      <option value="notices">Notices</option>
+                      <option value="forms">Forms</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="isPublic" class="form-label">Visibility</label>
+                    <select class="form-select" id="isPublic" name="isPublic">
+                      <option value="true" selected>Public (Students can view)</option>
+                      <option value="false">Private (Faculty only)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="document" class="form-label">Select File <span class="text-danger">*</span></label>
+                  <input type="file" class="form-control" id="document" name="document" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png" required>
+                  <div class="form-text">Supported formats: PDF, DOC, DOCX, TXT, JPG, JPEG, PNG (Max: 10MB)</div>
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Upload Document</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <%- include("../includes/footer.ejs") %>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

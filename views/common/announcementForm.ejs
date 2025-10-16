@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <%- include("../includes/head.ejs") %>
+  <title><%= isEdit ? 'Edit' : 'Create' %> Announcement - Dept Connect</title>
+  </head>
+
+  <body class="d-flex flex-column h-100 bg-light">
+    <%- include("../includes/navbar.ejs") %>
+    
+    <!-- Flash Messages -->
+    <%- include("../includes/flash.ejs") %>
+
+    <!-- Main Content -->
+    <main class="flex-shrink-0">
+      <div class="container mt-4">
+        <div class="row justify-content-center">
+          <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+              <div class="card-header bg-white border-0 pb-0">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0"><%= isEdit ? 'Edit' : 'New' %> Announcement</h5>
+                  <a href="/api/announcements" class="btn-close"></a>
+                </div>
+              </div>
+              <div class="card-body pt-3">
+                <form 
+                  action="<%= isEdit ? `/api/announcements/${announcement._id}?_method=PUT` : '/api/announcements' %>" 
+                  method="POST"
+                >
+                  <!-- Title -->
+                  <div class="mb-3">
+                    <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                    <input 
+                      type="text" 
+                      class="form-control border-0 bg-light" 
+                      id="title" 
+                      name="title" 
+                      value="<%= announcement ? announcement.title : '' %>"
+                      placeholder="Enter announcement title" 
+                      required
+                    >
+                  </div>
+
+                  <!-- Content -->
+                  <div class="mb-3">
+                    <label for="body" class="form-label">Content <span class="text-danger">*</span></label>
+                    <textarea 
+                      class="form-control border-0 bg-light" 
+                      id="body" 
+                      name="body" 
+                      rows="4" 
+                      placeholder="Enter announcement details" 
+                      required
+                    ><%= announcement ? announcement.body : '' %></textarea>
+                  </div>
+
+                  <!-- Priority and Target Audience -->
+                  <div class="row">
+                    <div class="col-6 mb-3">
+                      <label for="priority" class="form-label">Priority</label>
+                      <select class="form-select border-0 bg-light" id="priority" name="priority">
+                        <option value="low" <%= announcement && announcement.priority === 'low' ? 'selected' : '' %>>Low</option>
+                        <option value="medium" <%= !announcement || announcement.priority === 'medium' ? 'selected' : '' %>>Medium</option>
+                        <option value="high" <%= announcement && announcement.priority === 'high' ? 'selected' : '' %>>High</option>
+                      </select>
+                    </div>
+
+                    <div class="col-6 mb-3">
+                      <label for="targetRole" class="form-label">Target Audience</label>
+                      <select class="form-select border-0 bg-light" id="targetRole" name="targetRole">
+                        <option value="all" <%= !announcement || announcement.targetRole === 'all' ? 'selected' : '' %>>All</option>
+                        <option value="user" <%= announcement && announcement.targetRole === 'user' ? 'selected' : '' %>>Students</option>
+                        <option value="faculty" <%= announcement && announcement.targetRole === 'faculty' ? 'selected' : '' %>>Faculty</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Buttons -->
+                  <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a href="/api/announcements" class="btn btn-light">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                      <%= isEdit ? 'Update' : 'Create' %> Announcement
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include("../includes/footer.ejs") %>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

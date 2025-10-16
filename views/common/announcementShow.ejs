@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100">
+  <%- include("../includes/head.ejs") %>
+  <title>Announcements - Dept Connect</title>
+  </head>
+
+  <body class="d-flex flex-column h-100 bg-light">
+    <%- include("../includes/navbar.ejs") %>
+    
+    <!-- Flash Messages -->
+    <%- include("../includes/flash.ejs") %>
+
+    <!-- Main Content -->
+    <main class="flex-shrink-0">
+      <div class="container mt-4">
+        <!-- Header Section -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="mb-1 d-flex align-items-center">
+              <i class="bi bi-megaphone me-2 text-primary"></i>
+              Announcements
+            </h4>
+            <p class="text-muted mb-0">Stay updated with department news and updates</p>
+          </div>
+          <% if (currentUser && (currentUser.role === 'faculty' || currentUser.role === 'hod')) { %>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#announcementModal">
+              <i class="bi bi-plus me-1"></i>
+              New Announcement
+            </button>
+          <% } %>
+        </div>
+
+        <!-- Priority Filter Buttons -->
+        <div class="mb-4">
+          <div class="btn-group" role="group">
+            <a href="/api/announcements?priority=all" 
+               class="btn <%= selectedPriority === 'all' ? 'btn-primary' : 'btn-outline-secondary' %>">
+              All
+            </a>
+            <a href="/api/announcements?priority=high" 
+               class="btn <%= selectedPriority === 'high' ? 'btn-danger' : 'btn-outline-secondary' %>">
+              Urgent
+            </a>
+            <a href="/api/announcements?priority=medium" 
+               class="btn <%= selectedPriority === 'medium' ? 'btn-warning' : 'btn-outline-secondary' %>">
+              Medium
+            </a>
+            <a href="/api/announcements?priority=low" 
+               class="btn <%= selectedPriority === 'low' ? 'btn-success' : 'btn-outline-secondary' %>">
+              Low
+            </a>
+          </div>
+        </div>
+
+        <!-- Announcements List -->
+        <div class="row">
+          <% if (announcements && announcements.length > 0) { %>
+            <% announcements.forEach(function(announcement) { %>
+              <div class="col-12 mb-3">
+                <div class="card border-0 shadow-sm">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                      <h6 class="card-title mb-1 fw-bold"><%= announcement.title %></h6>
+                      <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-<%= announcement.priority === 'high' ? 'danger' : announcement.priority === 'medium' ? 'warning text-dark' : 'success' %> rounded-pill">
+                          <%= announcement.priority %>
+                        </span>
+                        <span class="badge bg-secondary rounded-pill">
+                          <%= announcement.targetRole === 'user' ? 'Students' : announcement.targetRole === 'faculty' ? 'Faculty' : 'All' %>
+                        </span>
+                        <!-- Action buttons for faculty/HOD -->
+                        <% if (currentUser && (currentUser.role === 'faculty' || currentUser.role === 'hod')) { %>
+                          <% if (currentUser.role === 'hod' || announcement.createdBy._id.toString() === currentUser._id.toString()) { %>
+                            <div class="dropdown">
+                              <button class="btn btn-sm btn-link text-muted p-0" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-pencil"></i>
+                              </button>
+                              <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                  <a class="dropdown-item" href="/api/announcements/<%= announcement._id %>/edit">
+                                    <i class="bi bi-pencil me-2"></i>Edit
+                                  </a>
+                                </li>
+                              </ul>
+                            </div>
+                            <form action="/api/announcements/<%= announcement._id %>?_method=DELETE" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?')">
+                              <button type="submit" class="btn btn-sm btn-link text-danger p-0">
+                                <i class="bi bi-trash"></i>
+                              </button>
+                            </form>
+                          <% } %>
+                        <% } %>
+                      </div>
+                    </div>
+                    <p class="card-text text-muted mb-2"><%= announcement.body %></p>
+                    <small class="text-muted">
+                      Posted by: <%= announcement.createdBy.username %> • <%= new Date(announcement.createdAt).toLocaleDateString() %>
+                    </small>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          <% } else { %>
+            <div class="col-12">
+              <div class="text-center py-5">
+                <i class="bi bi-megaphone text-muted" style="font-size: 3rem;"></i>
+                <h5 class="text-muted mt-3">No announcements available</h5>
+                <p class="text-muted">
+                  <% if (currentUser && (currentUser.role === 'faculty' || currentUser.role === 'hod')) { %>
+                    Create the first announcement to get started!
+                  <% } else { %>
+                    Check back later for updates.
+                  <% } %>
+                </p>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </main>
+
+    <!-- Create Announcement Modal -->
+    <% if (currentUser && (currentUser.role === 'faculty' || currentUser.role === 'hod')) { %>
+      <div class="modal fade" id="announcementModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header border-0">
+              <h5 class="modal-title">New Announcement</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="/api/announcements" method="POST">
+              <div class="modal-body">
+                <div class="mb-3">
+                  <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="title" name="title" placeholder="Enter announcement title" required>
+                </div>
+                <div class="mb-3">
+                  <label for="body" class="form-label">Content <span class="text-danger">*</span></label>
+                  <textarea class="form-control" id="body" name="body" rows="4" placeholder="Enter announcement details" required></textarea>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="priority" class="form-label">Priority</label>
+                    <select class="form-select" id="priority" name="priority">
+                      <option value="low">Low</option>
+                      <option value="medium" selected>Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="targetRole" class="form-label">Target Audience</label>
+                    <select class="form-select" id="targetRole" name="targetRole">
+                      <option value="all" selected>All</option>
+                      <option value="user">Students</option>
+                      <option value="faculty">Faculty</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Create Announcement</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <%- include("../includes/footer.ejs") %>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

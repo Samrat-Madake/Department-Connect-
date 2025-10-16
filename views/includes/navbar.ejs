@@ -1,0 +1,114 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container">
+    <!-- Brand/Logo (Using text-primary for deep blue color and an inline SVG icon) -->
+    <a class="navbar-brand fw-bold text-primary fs-5" href="/">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        fill="currentColor"
+        class="bi bi-link-45deg me-2"
+        viewBox="0 0 16 16"
+      >
+        <path
+          d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 8.5h-1.34c.091.714.43 1.396.93 1.896l1.828 1.828a2 2 0 1 1-2.828 2.828L4.715 9.357a2 2 0 1 1 2.828-2.828z"
+        />
+        <path
+          d="M9.172 7.914 10.543 6.543a3 3 0 1 1 4.242 4.242l-1.828 1.829A3 3 0 0 1 11.414 11h-1.34c.091.714.43 1.396.93 1.896l1.828 1.828a2 2 0 1 0 2.828-2.828L12.357 7.914a2 2 0 1 0-2.828-2.828z"
+        />
+      </svg>
+      Dept Connect
+    </a>
+
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
+      aria-controls="navbarNav"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Back to Dashboard and Logout buttons for logged in users -->
+    <% if (currentUser) { %>
+      <div class="d-flex align-items-center gap-2">
+        <!-- Back to Dashboard Button -->
+        <a class="btn btn-outline-secondary px-3 py-2 back-button" href="<%= 
+          currentUser.role === 'hod' ? '/hod/dashboard' : 
+          currentUser.role === 'faculty' ? '/faculty/dashboard' : 
+          '/user/dashboard' 
+        %>">
+          <i class="bi bi-arrow-left me-1"></i>
+          Dashboard
+        </a>
+        
+        <!-- Logout Button -->
+        <a
+          class="btn btn-outline-danger text-danger px-3 py-2 fw-bold logout-button"
+          href="/api/auth/logout"
+        >
+          <i class="bi bi-box-arrow-right me-1"></i>
+          Logout
+        </a>
+      </div>
+    <% } %>
+  </div>
+</nav>
+
+<div>
+  <p>
+  </p>
+</div>
+
+<!-- Custom CSS -->
+<style>
+  .custom-teal-button {
+    background-color: #20c997;
+    border-color: #20c997;
+    border-radius: 0.5rem;
+    line-height: 1;
+    transition: all 0.2s ease;
+  }
+  .custom-teal-button:hover {
+    background-color: #17a47d;
+    border-color: #17a47d;
+    transform: translateY(-1px);
+  }
+  
+  .logout-button {
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+  }
+  .logout-button:hover {
+    background-color: #dc3545;
+    color: white !important;
+    transform: translateY(-1px);
+  }
+  
+  .navbar-light .navbar-nav .nav-link {
+    color: #343a40 !important;
+    font-weight: 500;
+  }
+  .navbar-light .navbar-brand {
+    color: #0d6efd !important;
+  }
+  
+  .navbar-text {
+    font-size: 0.9rem;
+  }
+  
+  .back-button {
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    border-color: #6c757d;
+  }
+  .back-button:hover {
+    background-color: #6c757d;
+    color: white !important;
+    transform: translateY(-1px);
+    border-color: #6c757d;
+  }
+</style>

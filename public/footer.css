@@ -1,0 +1,22 @@
+body {
+  display: flex;
+
+  flex-direction: column;
+  width: 100%;
+
+  min-height: 100vh;
+}
+
+.main-content-wrapper {
+  flex-grow: 1;
+}
+.hover-link:hover {
+  color: #20c997 !important;
+}
+.text-secondary {
+  color: #adb5bd !important;
+}
+
+.container{
+    width: 100vh !important;
+}

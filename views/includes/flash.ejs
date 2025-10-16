@@ -1,0 +1,49 @@
+<!-- Flash Messages -->
+<% if (success && success.length > 0) { %>
+  <div class="container mt-3">
+    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+      <i class="bi bi-check-circle me-2"></i>
+      <%= success %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="closeAlert('success-alert')"></button>
+    </div>
+  </div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+  <div class="container mt-3">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      <%= error %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="closeAlert('error-alert')"></button>
+    </div>
+  </div>
+<% } %>
+
+<!-- Bootstrap Bundle JS (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JavaScript for Flash Messages -->
+<script>
+  // Function to close alerts manually
+  function closeAlert(alertId) {
+    const alertElement = document.getElementById(alertId);
+    if (alertElement) {
+      // Use Bootstrap's Alert class to close
+      const bsAlert = new bootstrap.Alert(alertElement);
+      bsAlert.close();
+    }
+  }
+
+  // Auto-dismiss alerts after 5 seconds
+  document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert-dismissible');
+    alerts.forEach(function(alert) {
+      setTimeout(function() {
+        if (alert && alert.classList.contains('show')) {
+          const bsAlert = new bootstrap.Alert(alert);
+          bsAlert.close();
+        }
+      }, 5000); // 5 seconds
+    });
+  });
+</script>
